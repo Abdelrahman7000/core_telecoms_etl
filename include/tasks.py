@@ -66,7 +66,6 @@ def write_parquet_to_s3(df, bucket, key):
     logging.info(f"Wrote parquet → s3://{bucket}/{key}")
 
 
-
 def s3_exists(bucket, key):
     '''
     Check if an object exists in S3.
