@@ -1,0 +1,4 @@
+version: '0.1'
+name: 'my_simple_dbt_project'
+vars:
+    my_name: "No entry"
