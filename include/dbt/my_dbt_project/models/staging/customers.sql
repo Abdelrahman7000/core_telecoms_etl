@@ -1,0 +1,1 @@
+select * from {{ source('source', 'customers_dataset') }}

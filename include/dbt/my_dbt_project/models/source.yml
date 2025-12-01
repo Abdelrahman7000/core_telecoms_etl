@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: source
+    description: a clone of a Postgres 
+    database: postgres
+    schema: postgres
+    tables:
+      - name: customers_dataset

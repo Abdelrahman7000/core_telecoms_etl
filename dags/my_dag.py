@@ -15,6 +15,7 @@ from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, ExecutionConfig
 from cosmos.profiles.postgres import PostgresUserPasswordProfileMapping
 import os
 from include.tasks import ingest_website_forms,ingest_call_center_logs,ingest_social_media_data,staging_static_data
+from include.load import load_data_to_pg
 
 YOUR_NAME = "YOUR_NAME"
 CONNECTION_ID = "db_conn"
@@ -69,6 +70,7 @@ def my_simple_dbt_dag():
 
     #chain(transform_data, query_table)
 
+    # Define ingestion tasks
     @task 
     def ingest_data_tasks():
         ingest_website_forms()
@@ -77,9 +79,28 @@ def my_simple_dbt_dag():
         staging_static_data("customers_dataset", source="s3")
         staging_static_data("agents_dataset", source="url")
     
-    ingestion_task = ingest_data_tasks()
+    @task
+    def load_data_tasks():
+        load_data_to_pg(
+            table_name="call_center_logs",
+            mode="incremental",
+            source_prefix="raw/call_center_logs/"
+        )
+        load_data_to_pg(
+            table_name="media_complaints",
+            mode="incremental",
+            source_prefix="raw/social_media/"
+        )
+        load_data_to_pg(
+            table_name="web_forms",
+            mode="incremental",
+            source_prefix="raw/web_forms/"
+        )
+        
+    #ingestion_task = ingest_data_tasks()
+    #load_task = load_data_tasks()
 
-    transform_data >> query_table >> ingestion_task
+    transform_data >> query_table #>> ingestion_task >> load_task
 
 
 

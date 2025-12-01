@@ -155,25 +155,32 @@ def staging_static_data(filename, source="s3"):
         "1bQTdflSmSTkbMm2HLmLkKDcJlwv1S2CnbOxzbS6QcnQ/export?format=csv&gid=0"
     )
 
-    dest_key = f"raw/{filename}.csv"
+    dest_key = f"raw/{filename}.parquet"
 
     try:
         if source == "s3":
             src_key = f"customers/{filename}.csv"
-            s3.copy_object(
-                Bucket=DEST_BUCKET,
-                CopySource={"Bucket": SOURCE_BUCKET, "Key": src_key},
-                Key=dest_key,
-            )
+            obj = s3.get_object(Bucket=SOURCE_BUCKET, Key=src_key)
+            data = obj["Body"].read()
+            df = pd.read_csv(io.BytesIO(data))
+            write_parquet_to_s3(df, DEST_BUCKET, dest_key)
+            logging.info(f"Data loaded successfully from S3: s3://{SOURCE_BUCKET}/{src_key}")
+            # s3.copy_object(
+            #     Bucket=DEST_BUCKET,
+            #     CopySource={"Bucket": SOURCE_BUCKET, "Key": src_key},
+            #     Key=dest_key,
+            # )
         else:
             response = requests.get(URL)
             response.raise_for_status()
-
-            s3.put_object(
-                Bucket=DEST_BUCKET,
-                Key=dest_key,
-                Body=response.content,
-            )
+            df = pd.read_csv(io.BytesIO(response.content))
+            write_parquet_to_s3(df, DEST_BUCKET, dest_key)
+            logging.info(f"Data loaded successfully from URL: {URL}")
+            # s3.put_object(
+            #     Bucket=DEST_BUCKET,
+            #     Key=dest_key,
+            #     Body=response.content,
+            # )
 
         logging.info("Data loaded successfully")
     except Exception as e:
