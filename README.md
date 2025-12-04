@@ -5,6 +5,7 @@ This is an ETL project that extracts and collects customers' complaints data in 
 
 Project structure
 ================
+```
 coretelecoms-etl/
 ├── .astro
 ├── dags/
@@ -13,19 +14,20 @@ coretelecoms-etl/
 ├── include/                           
 │   ├── load.py
 │   ├── tasks.py
-│   │── transformation.py
+│   ├── transformation.py
 │   └── dbt/
-│	   my_dbt_project/
+│       └── my_dbt_project/
 │           └── models/
-│		        ├── marts/
-│               ├── staging/
-│               ├──dbt_project.yml
-│               └─ source.yml
+│               ├── marts/
+│               │   ├── staging/
+│               │
+│               ├── dbt_project.yml
+│               └── source.yml
 ├── Dockerfile                           
 ├── requirements.txt               
 ├── .env                     
 └── airflow_settings.yml
-
+```
 
 
 
@@ -35,3 +37,7 @@ S3: data lake
 python: for data ingestion, and transformation.
 dbt: for building the dimensional model
 postgres: data warehouse
+
+Requirements
+================
+You need to have astro cli on your device to run this project, To install it go to this <a href='https://www.astronomer.io/docs/astro/cli/install-cli' > Link </a>
