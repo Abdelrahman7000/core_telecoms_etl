@@ -52,7 +52,7 @@ def my_simple_dbt_dag():
     )
 
     
-    # Define ingestion tasks
+    # Ingest data from s3 and url tasks
     @task 
     def ingest_data_tasks():
         ingest_website_forms()
@@ -61,6 +61,7 @@ def my_simple_dbt_dag():
         staging_static_data("customers_dataset", source="s3")
         staging_static_data("agents_dataset", source="url")
     
+    # Load data to Postgres tasks
     @task
     def load_data_tasks():
         load_data_to_pg(
