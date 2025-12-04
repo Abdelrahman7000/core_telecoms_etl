@@ -1,0 +1,12 @@
+my_dbt_project:
+  outputs:
+    dev:
+      dbname: "{{ env_var('DBT_DATABASE') }}" #postgres
+      host: "{{ env_var('DBT_HOST') }}" #localhost
+      pass: "{{ env_var('DBT_PASS') }}" #postgres
+      port: 5432
+      schema: "{{ env_var('DBT_SCHEMA') }}" #postgres
+      threads: 4
+      type: postgres
+      user: "{{ env_var('DBT_USER') }}" #postgres
+  target: dev
