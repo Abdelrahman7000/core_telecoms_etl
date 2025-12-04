@@ -11,7 +11,7 @@ import pandas as pd
 
 load_dotenv()
 
-
+ 
 def staging_static_data(filename, source='s3'):
     SOURCE_BUCKET = os.getenv("SOURCE_BUCKET")
     DEST_BUCKET = os.getenv("DEST_BUCKET")

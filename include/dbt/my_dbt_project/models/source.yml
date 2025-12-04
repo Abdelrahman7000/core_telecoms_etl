@@ -7,3 +7,7 @@ sources:
     schema: postgres
     tables:
       - name: customers_dataset
+      - name: web_forms
+      - name: agents_dataset
+      - name: call_center_logs
+      - name: media_complaints

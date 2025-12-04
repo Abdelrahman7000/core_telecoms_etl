@@ -16,6 +16,7 @@ from cosmos.profiles.postgres import PostgresUserPasswordProfileMapping
 import os
 from include.tasks import ingest_website_forms,ingest_call_center_logs,ingest_social_media_data,staging_static_data
 from include.load import load_data_to_pg
+from include.transformation import transform_call_centers_logs,transform_media_complaints,transform_web_forms
 
 YOUR_NAME = "YOUR_NAME"
 CONNECTION_ID = "db_conn"
@@ -40,7 +41,6 @@ profile_config = ProfileConfig(
     ),
 )
 
-# OPTIONAL: The path where Cosmos will find the dbt executable
 execution_config = ExecutionConfig(
     dbt_executable_path=DBT_EXECUTABLE_PATH,
 )
@@ -54,7 +54,6 @@ def my_simple_dbt_dag():
         group_id="transform_data",
         project_config=ProjectConfig(DBT_PROJECT_PATH),
         profile_config=profile_config,
-        # OPTIONAL: your execution config if you are using a virtual environment
         execution_config=execution_config,
         operator_args={
             "vars": '{"my_name": {{ params.my_name }} }',
@@ -62,14 +61,7 @@ def my_simple_dbt_dag():
         default_args={"retries": 2},
     )
 
-    query_table = SQLExecuteQueryOperator(
-        task_id="query_table",
-        conn_id=CONNECTION_ID,
-        sql=f"SELECT * FROM {DB_NAME}.{SCHEMA_NAME}.{MODEL_TO_QUERY}",
-    )
-
-    #chain(transform_data, query_table)
-
+    
     # Define ingestion tasks
     @task 
     def ingest_data_tasks():
@@ -84,24 +76,27 @@ def my_simple_dbt_dag():
         load_data_to_pg(
             table_name="call_center_logs",
             mode="incremental",
-            source_prefix="raw/call_center_logs/"
+            source_prefix="raw/call_center_logs/",
+            transform_fn=transform_call_centers_logs
         )
         load_data_to_pg(
             table_name="media_complaints",
             mode="incremental",
-            source_prefix="raw/social_media/"
+            source_prefix="raw/social_media/",
+            transform_fn=transform_media_complaints
         )
         load_data_to_pg(
             table_name="web_forms",
             mode="incremental",
-            source_prefix="raw/web_forms/"
+            source_prefix="raw/web_forms/",
+            transform_fn=transform_web_forms
         )
         
-    #ingestion_task = ingest_data_tasks()
-    #load_task = load_data_tasks()
+        
+    ingestion_task = ingest_data_tasks()
+    load_task = load_data_tasks()
 
-    transform_data >> query_table #>> ingestion_task >> load_task
-
-
+    ingestion_task >> load_task >> transform_data
+    
 
 my_simple_dbt_dag()
