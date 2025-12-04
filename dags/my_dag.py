@@ -21,6 +21,7 @@ DBT_PROJECT_PATH = f"{os.environ['AIRFLOW_HOME']}/include/dbt/my_dbt_project"
 DBT_EXECUTABLE_PATH = f"{os.environ['AIRFLOW_HOME']}/dbt_venv/bin/dbt"
 
 
+
 profile_config = ProfileConfig(
     profile_name="default",
     target_name="dev",
