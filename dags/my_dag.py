@@ -20,10 +20,6 @@ MODEL_TO_QUERY = "model2"
 DBT_PROJECT_PATH = f"{os.environ['AIRFLOW_HOME']}/include/dbt/my_dbt_project"
 DBT_EXECUTABLE_PATH = f"{os.environ['AIRFLOW_HOME']}/dbt_venv/bin/dbt"
 
-# OPTIONAL: The path where Cosmos will find the dbt executable
-# in the virtual environment created in the Dockerfile if you cannot 
-# install your dbt adapter in requirements.txt due to package conflicts.
-# DBT_EXECUTABLE_PATH = f"{os.environ['AIRFLOW_HOME']}/dbt_venv/bin/dbt"
 
 profile_config = ProfileConfig(
     profile_name="default",
